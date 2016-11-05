@@ -31,3 +31,4 @@ playGame(State).
 % assert(+ nº jogada, +Tabuleiro)
 % avaliaPosicao(+ Tabuleiro, +Jogador,-Valor)
 % geraMelhorTabuleiro(+Tabuleiro, +Jogador, -MelhorTabuleiro):- geraTabuleiro(Tabuleiro, PossiveisTabuleiros), avaliaTabuleiros(possiveisTabuleiros, MelhorTabuleiro).
+

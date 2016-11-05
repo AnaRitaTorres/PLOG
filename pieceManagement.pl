@@ -14,7 +14,8 @@ getPiece(X, Y, Board, Symbol) :- dentroTabuleiro(X,Y), (X,Y,Board)^(reachedY(Y, 
 getColor(X, Y, Board, Color) :- (isIvory(X,Y,Board) -> Color = ivory );
 										(isCigar(X,Y,Board) -> Color = cigar ).
 
-setPiece(X, Y, Symbol, Board1, Board2).
+setPiece(X, Y, Symbol, BoardIn, BoardOut) :- dentroTabuleiro(X,Y).
+											 % TODO
 
 % verifica a peca nas coordenadas
 isIvory(X,Y,Board) :- 	getPiece(X,Y,Board,Symbol),
@@ -32,22 +33,88 @@ isQueen(X, Y, Board) :- getPiece(X,Y,Board,Symbol),
 isBaby(X, Y, Board) :- 	getPiece(X,Y,Board,Symbol),
 						(Symbol == ivoryBaby; Symbol == cigarBaby).
 
-areOpponents( X1, Y1, X2, Y2, Board):- 	(isIvory(X1, Y1, Board), isCigar(X2, Y2, Board));
+areOpponents(X1, Y1, X2, Y2, Board):- 	(isIvory(X1, Y1, Board), isCigar(X2, Y2, Board));
 										(isCigar(X1, Y1, Board), isIvory(X2, Y2, Board)).
 
-% checks for a very basic move.
-possibleBasicMovement(X,Y, XTarget,YTarget) :-	dentroTabuleiro(XTarget, YTarget), 
-												(horizontal(X,Y, XTarget,YTarget) ; vertical(X,Y, XTarget,YTarget); diagonal(X,Y, XTarget,YTarget)).												
-												
-%%%%%%%%%%%%%%%% CAPTURING MOVE %%%%%%%%%%%%%%%%%%
-%possibleCapturingQueenMove(X, Y, XTarget, YTarget, Board) :- 	(dentroTabuleiro(XTarget, YTarget),
-%																possibleBasicMovement(X, Y, XTarget, YTarget),
-%																areOpponents(X, Y, XTarget, YTarget, Board))
-																% peca alvo e' baby -> come
-																% peca alvo e' queen -> gameOver
-																
-														
-												
-%capturingBabyMove().
-													
-												
+validatePlayer(Player) :- 	(Player == ivory -> !;
+							 Player == cigar -> !;
+							(write('invalid player submited.'), fail)).
+										
+stackCritical(Stack) :- Stack =< 2.
+
+validateCurrentCoords(Player, X, Y, Board):- 	dentroTabuleiro(X,Y),
+												\+ isFree(X, Y, Board),
+												(Player == ivory -> isIvory(X,Y,Board);
+												 Player == cigar -> isCigar(X,Y,Board)).
+												 
+validateTargetCoords(Player, X, Y, TargetX, TargetY, Board) :- 	dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																(isFree(TargetX,TargetY,Board);
+																(Player == ivory -> isCigar(TargetX,TargetY,Board);
+																 Player == cigar -> isIvory(TargetX,TargetY,Board))),
+																(vertical(X,Y,TargetX,TargetY);
+																 horizontal(X,Y,TargetX,TargetY);
+																 diagonal(X,Y,TargetX,TargetY)).
+
+getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut)) :-
+				%repeat,
+				write('x= '), read(X),
+				write('y= '), read(Y), nl,
+				write('target x= '), read(TargetX),
+				write('target y= '), read(TargetY), nl,
+				Play = (Player, X, Y, TargetX, TargetY),
+				makePlay(Play,(IvoryStack,CigarStack,Board), (IvoryStackOut, CigarStackOut, BoardOut)).
+	
+% Play: 
+% 1. check stack. if <= 2, nope.
+% 2. get current coordinates (check if valid: 	- inside board
+%												- space not free
+% 												- piece of the right color)
+% 3. get target coordinates (check if valid:	- inside board
+%												- space free, or of the opposite color
+%												- diagonal, horizontal or vertical to current coords)
+% 4. compute move... :
+% 		if it's a queen move
+%			if target is an empty space
+%				replace target with queen
+%				replace current coords with a baby
+%				reduce stack by 1
+%			if target is baby
+%				replace target with queen
+%				replace current coords with empty space
+%			if target is queen
+%				replace target with dominant queen
+%				replace current with empty
+%				check-mate
+%		if it's a baby move
+%			if target is empty space
+%				if distance to queen is reduced
+%					replace target with baby
+%					replace current with empty
+%			if target is baby
+%				replace target with our baby
+%				replace current with empty
+%			if target is queen
+%				replace target with baby
+%				replace current to empty
+%				check-mate
+
+%makePlay(+(Player,X,Y,TargetX,TargetY), +(IvoryStack, CigarStack, Board), -(IvoryStackOut, CigarStackOut, BoardOut))
+makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,Board),(IvoryStackOut, CigarStackOut, BoardOut)):-
+
+		validatePlayer(Player),
+		\+ stackCritical(IvoryStack), \+ stackCritical(CigarStack),
+		validateCurrentCoords(Player, X, Y, Board),
+		validateTargetCoords(Player,X,Y,TargetX,TargetY,Board),
+		
+		%%%%%%%%%%%%%%%%%%%%%% TODO %%%%%%%%%%%%%%%%%%%%%%%%
+		
+		(isQueen(X,Y,Board) -> 
+			(isFree(TargetX,TargetY,Board) -> !;
+			 isBaby(TargetX,TargetY,Board) -> !;
+			 isQueen(TargetX,TargetY,Board) -> !), !;
+		 isBaby(X,Y,Board) ->
+			(isFree(TargetX,TargetY,Board) -> !;
+			 isBaby(TargetX,TargetY,Board) -> !;
+			 isQueen(TargetX,TargetY,Board) -> !), !
+		).
