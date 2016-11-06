@@ -32,9 +32,9 @@ printBoardRowSeparator :- write('   '), printBoardRowSeparatorCol(12).
 printBoard(_, _, []).
 printBoard(IvoryQueenStack, CigarQueenStack, [Row|OtherRows], [AlphaCol|OtherAlphaCols]) :- printAlphaCol(AlphaCol), printBoardRow(IvoryQueenStack, CigarQueenStack, Row), nl, printBoardRowSeparator, nl, printBoard(IvoryQueenStack, CigarQueenStack, OtherRows, OtherAlphaCols).
 
-printFancyBoard([IvoryQueenStack, CigarQueenStack, Board]) :-  rows(Rows), printAlphaRows(Rows), nl, printBoardRowSeparator, cols(Cols), nl, printBoard(IvoryQueenStack, CigarQueenStack, Board, Cols).
+printFancyBoard(IvoryQueenStack, CigarQueenStack, Board) :-  rows(Rows), printAlphaRows(Rows), nl, printBoardRowSeparator, cols(Cols), nl, printBoard(IvoryQueenStack, CigarQueenStack, Board, Cols).
 
 % print an empty board
-printEmptyBoard :- Board^(emptyBoard(Board), printFancyBoard([20,20,Board])).
-printHalfwayBoard :- Board^(halfwayBoard(Board), printFancyBoard([4, 6, Board])).
-printFinalBoard :- Board^(finalBoard(Board), printFancyBoard([2, 2, Board])).
+printEmptyBoard :- Board^(emptyBoard(Board), printFancyBoard(20,20,Board)).
+printHalfwayBoard :- Board^(halfwayBoard(Board), printFancyBoard(4, 6, Board)).
+printFinalBoard :- Board^(finalBoard(Board), printFancyBoard(2, 2, Board)).

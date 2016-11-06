@@ -14,8 +14,22 @@ getPiece(X, Y, Board, Symbol) :- dentroTabuleiro(X,Y), (X,Y,Board)^(reachedY(Y, 
 getColor(X, Y, Board, Color) :- (isIvory(X,Y,Board) -> Color = ivory );
 										(isCigar(X,Y,Board) -> Color = cigar ).
 
-setPiece(X, Y, Symbol, BoardIn, BoardOut) :- dentroTabuleiro(X,Y).
-											 % TODO
+setPiece(X, Y, Symbol, BoardIn, BoardOut) :- 	setPieceLineAux(0,X,Y,Symbol,BoardIn,BoardOut), !.
+
+setPieceLineAux(_,_,_,_,[],[]).
+setPieceLineAux(Y, X, Y, Symbol, [Line | Tail], [Line2 | Tail2]) :- 	setPieceColAux(0, X, Symbol, Line, Line2),
+																		Ynow is Y + 1,
+																		setPieceLineAux(Ynow, X, Y, Symbol, Tail, Tail2).
+setPieceLineAux(Ynow, X, Y, Symbol, [Line | Tail], [Line | Tail2]) :- 	Ynow \= Y,
+																		Ynow2 is Ynow + 1,
+																		setPieceLineAux(Ynow2, X, Y, Symbol, Tail, Tail2).
+
+setPieceColAux(_,_,_,[],[]).
+setPieceColAux(X, X, Symbol, [ _ | Tail], [Symbol | Tail2]) :- 			Xnow is X + 1,
+																		setPieceColAux(Xnow, X, Symbol, Tail, Tail2).																	
+setPieceColAux(Xnow, X, Symbol, [Element | Tail], [Element | Tail2]) :- Xnow \= X,
+																		Xnow2 is Xnow + 1,
+																		setPieceColAux(Xnow2, X, Symbol, Tail, Tail2).
 
 % verifica a peca nas coordenadas
 isIvory(X,Y,Board) :- 	getPiece(X,Y,Board,Symbol),
