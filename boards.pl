@@ -33,7 +33,7 @@ halfwayBoard([[empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty
 			[empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty],
 			[empty,empty,empty,empty,empty,empty,ivoryBaby,empty,empty,empty,empty,empty],
 			[empty,empty,empty,empty,empty,empty,cigarQueen,empty,empty,empty,empty,empty],
-			[empty,empty,ivoryQueen,empty,empty,empty,empty,empty,empty,empty,empty,empty],
+			[empty,empty,ivoryQueen,empty,empty,empty,empty,empty,cigarBaby,empty,empty,empty],
 			[empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty],
 			[empty,empty,cigarBaby,empty,empty,empty,empty,empty,empty,empty,empty,empty],
 			[empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty,empty],

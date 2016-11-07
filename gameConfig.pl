@@ -25,8 +25,6 @@ runGame(State) :- 	(State == menu -> setupGame);
 					(State == inGame -> playGame(State));
 					(State == gameOver -> write('Game Over!'), abort).
 
-playGame(State).
-
 % joga(TipodeJogo, Dificuldade):- inicializaJogo(TipodeJogo), repeat, joga(Dificuldade), testaTermina, mostraPontuacao.
 % assert(+ nº jogada, +Tabuleiro)
 % avaliaPosicao(+ Tabuleiro, +Jogador,-Valor)
