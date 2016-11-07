@@ -114,21 +114,23 @@ getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStack
 %				check-mate
 
 %makePlay(+(Player,X,Y,TargetX,TargetY), +(IvoryStack, CigarStack, Board), -(IvoryStackOut, CigarStackOut, BoardOut))
-makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,Board),(IvoryStackOut, CigarStackOut, BoardOut)):-
+makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)) :-
 
 		validatePlayer(Player),
 		\+ stackCritical(IvoryStack), \+ stackCritical(CigarStack),
-		validateCurrentCoords(Player, X, Y, Board),
-		validateTargetCoords(Player,X,Y,TargetX,TargetY,Board),
+		validateCurrentCoords(Player,X, Y, BoardIn),
+		validateTargetCoords(Player,X,Y,TargetX,TargetY,BoardIn),
 		
 		%%%%%%%%%%%%%%%%%%%%%% TODO %%%%%%%%%%%%%%%%%%%%%%%%
-		
-		(isQueen(X,Y,Board) -> 
-			(isFree(TargetX,TargetY,Board) -> !;
-			 isBaby(TargetX,TargetY,Board) -> !;
-			 isQueen(TargetX,TargetY,Board) -> !), !;
-		 isBaby(X,Y,Board) ->
-			(isFree(TargetX,TargetY,Board) -> !;
-			 isBaby(TargetX,TargetY,Board) -> !;
-			 isQueen(TargetX,TargetY,Board) -> !), !
+		(isQueen(X,Y,BoardIn) -> 
+			(isFree(TargetX,TargetY,BoardIn) -> !;
+			 isBaby(TargetX,TargetY,BoardIn) -> !;
+			 isQueen(TargetX,TargetY,BoardIn) -> !), !;
+		 isBaby(X,Y,BoardIn) ->
+			(isFree(TargetX,TargetY,BoardIn) -> !;
+			 isBaby(TargetX,TargetY,BoardIn) ->
+				setPiece(X, Y,empty, BoardIn, BoardOut), 
+				IvoryStackOut is IvoryStack, 
+				CigarStackOut is CigarStack, !;
+			 isQueen(TargetX,TargetY,BoardIn) -> !), !
 		).
