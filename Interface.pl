@@ -1,0 +1,15 @@
+mainMenu :-
+	write(nl),
+	write('|||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('|                                         |'), nl,
+	write('|                                         |'), nl,
+	write('|        	MONKEY QUEEN                 |'), nl,
+	write('|                                         |'), nl,
+	write('|            Playing Modes:               |'), nl,
+	write('|                                         |'), nl,
+	write('|        	1.Human vs Human             |'), nl,
+	write('|        	2.Human vs Computer          |'), nl,
+	write('|        	3.Computer vs Computer       |'), nl,
+	write('|            0.Exit                       |'), nl,
+	write('|                                         |'), nl,
+	write('|||||||||||||||||||||||||||||||||||||||||||'), nl.
