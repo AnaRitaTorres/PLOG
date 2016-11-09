@@ -34,6 +34,8 @@ printBoard(IvoryQueenStack, CigarQueenStack, [Row|OtherRows], [AlphaCol|OtherAlp
 
 printFancyBoard(IvoryQueenStack, CigarQueenStack, Board) :-  rows(Rows), printAlphaRows(Rows), nl, printBoardRowSeparator, cols(Cols), nl, printBoard(IvoryQueenStack, CigarQueenStack, Board, Cols).
 
+clr:- write('\33\[2J').
+
 % print an empty board
 printEmptyBoard :- Board^(emptyBoard(Board), printFancyBoard(20,20,Board)).
 printHalfwayBoard :- Board^(halfwayBoard(Board), printFancyBoard(4, 6, Board)).

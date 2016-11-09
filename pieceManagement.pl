@@ -218,9 +218,12 @@ makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStac
 				write('CHECK MATE!')), !), !
 		).
 		
+insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)):- repeat,
+																													getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)) -> !; write('fail. ').
+
 play(Player, (IvoryStackIn,CigarStackIn,BoardIn)) :- 	\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
 														write(Player), write(' turn!'), nl,
-														getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)),
+														insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)),
 														(Player == ivory -> play(cigar, (IvoryStackOut,CigarStackOut,BoardOut));
 														Player == cigar -> play(ivory, (IvoryStackOut,CigarStackOut,BoardOut))).
 														
