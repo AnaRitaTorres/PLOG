@@ -32,51 +32,45 @@ classifyMovement(CurrentX, CurrentY, TargetX, TargetY, Movement) :- CurrentX =:=
 
 piecesBetween(X, Y, TargetX, TargetY, BoardIn, Pieces) :- 	classifyMovement(X,Y,TargetX,TargetY,Movement),
 															piecesBetweenAux(Movement, X, Y, TargetX, TargetY, BoardIn, -1, Pieces).
-piecesBetweenAux(Movement, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :- Movement == verticalUp -> 
-																			((Y =:=  TargetY -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+
+
+piecesBetweenAux(verticalUp, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-	(Y =:=  TargetY -> ReturnPieces = Pieces, !);
+																						getPiece(X, Y, BoardIn, Symbol),
+																						(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == verticalDown -> 
-																			((Y =:=  TargetY -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(verticalUp, X, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).
+piecesBetweenAux(verticalDown, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-	(Y =:=  TargetY -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == horizontalLeft -> 
-																			((X =:=  TargetX -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(verticalDown, X, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).
+piecesBetweenAux(horizontalLeft, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-	(X =:=  TargetX -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X - 1, Y, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == horizontalRight -> 
-																			((X =:=  TargetX -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(horizontalLeft, X - 1, Y, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).
+piecesBetweenAux(horizontalRight, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-	(X =:=  TargetX -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X + 1, Y, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == diagonalLeftUp -> 
-																			(((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(horizontalRight, X + 1, Y, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).	
+piecesBetweenAux(diagonalLeftUp, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-	((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X - 1, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == diagonalLeftDown -> 
-																			(((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(diagonalLeftUp, X - 1, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).																									
+piecesBetweenAux(diagonalLeftDown, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :-((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X - 1, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == diagonalRightUp -> 
-																			(((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(diagonalLeftDown, X - 1, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).
+piecesBetweenAux(diagonalRightUp, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :- ((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
+																							getPiece(X, Y, BoardIn, Symbol),
+																							(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X + 1, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces));
-																		Movement == diagonalRightDown -> 
-																			(((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
-																			getPiece(X, Y, BoardIn, Symbol),
-																			(Symbol \= empty -> PiecesNew is (Pieces + 1);
+																								piecesBetweenAux(diagonalRightUp, X + 1, Y - 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).
+piecesBetweenAux(diagonalRightDown, X, Y, TargetX, TargetY, BoardIn, Pieces, ReturnPieces) :- ((X =:=  TargetX, Y =:= TargetY) -> ReturnPieces = Pieces, !);
+																								getPiece(X, Y, BoardIn, Symbol),
+																								(Symbol \= empty -> PiecesNew is (Pieces + 1);
 																								PiecesNew is Pieces),
-																								piecesBetweenAux(Movement, X + 1, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces)).
+																								piecesBetweenAux(diagonalRightDown, X + 1, Y + 1, TargetX, TargetY, BoardIn, PiecesNew, ReturnPieces).

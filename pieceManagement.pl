@@ -39,8 +39,9 @@ setPieceColAux(Xnow, X, Symbol, [Element | Tail], [Element | Tail2]) :- Xnow \= 
 % --------------------- FIND QUEEN -------------------------
 % ----------------------------------------------------------																	
 
-findQueen(Player, BoardIn, QueenX, QueenY) :- 	(Player == ivory -> findQueenAux(ivoryQueen, BoardIn, 0, 0, QueenX, QueenY);
-										Player == cigar -> findQueenAux(cigarQueen, BoardIn, 0, 0, QueenX, QueenY)).
+findQueen(Player, BoardIn, QueenX, QueenY) :- Player == ivory, findQueenAux(ivoryQueen, BoardIn, 0, 0, QueenX, QueenY).
+
+findQueen(Player, BoardIn, QueenX, QueenY) :- Player == cigar, findQueenAux(cigarQueen, BoardIn, 0, 0, QueenX, QueenY).
 												
 findQueenAux(_,[],_,_,_,_).
 findQueenAux(Queen, [ThisRow | OtherRows], X, Y, QueenX, QueenY) :- findQueenAuxTrue(Queen, ThisRow, X, Y, QueenX, QueenY),
@@ -55,8 +56,8 @@ findQueenAuxTrue(Queen, [Elem | OtherElems], X, Y, QueenX, QueenY) :- (Elem == Q
 % --------------------- TRUTH PREDICATES -------------------
 % ----------------------------------------------------------
 
-getColor(X, Y, Board, Color) :- (isIvory(X,Y,Board) -> Color = ivory );
-										(isCigar(X,Y,Board) -> Color = cigar ).
+getColor(X, Y, Board, Color) :- isIvory(X,Y,Board), Color = ivory.
+getColor(X, Y, Board, Color) :- isCigar(X,Y,Board), Color = cigar.
 								
 isIvory(X,Y,Board) :- 	getPiece(X,Y,Board,Symbol),
 						(Symbol == ivoryQueen; Symbol == ivoryBaby).
@@ -73,28 +74,62 @@ isQueen(X, Y, Board) :- getPiece(X,Y,Board,Symbol),
 isBaby(X, Y, Board) :- 	getPiece(X,Y,Board,Symbol),
 						(Symbol == ivoryBaby; Symbol == cigarBaby).
 
-areOpponents(X1, Y1, X2, Y2, Board):- 	(isIvory(X1, Y1, Board), isCigar(X2, Y2, Board));
-										(isCigar(X1, Y1, Board), isIvory(X2, Y2, Board)).									
+areOpponents(X1, Y1, X2, Y2, Board) :- 	isIvory(X1, Y1, Board), isCigar(X2, Y2, Board).									
+areOpponents(X1, Y1, X2, Y2, Board) :- 	isCigar(X1, Y1, Board), isIvory(X2, Y2, Board).	
 
-validatePlayer(Player) :- 	(Player == ivory -> !;
-							 Player == cigar -> !;
-							write('invalid player submited.'), fail).
+validatePlayer(ivory).
+validatePlayer(cigar).
 										
-stackCritical(Stack) :- Stack =< 2.
+stackCritical(Stack) :- Stack <= 2.
+checkStack(Stack, GameOver) :- stackCritical(Stack), GameOver = true.
+checkStack(Stack, GameOver) :- \+ stackCritical(Stack), GameOver = false.
 
-validateCurrentCoords(Player, X, Y, Board):- 	dentroTabuleiro(X,Y),
+validateCurrentCoords(ivory, X, Y, Board):- 	dentroTabuleiro(X,Y),
 												\+ isFree(X, Y, Board),
-												(Player == ivory -> isIvory(X,Y,Board);
-												 Player == cigar -> isCigar(X,Y,Board)).
+												isIvory(X,Y,Board).
+
+validateCurrentCoords(cigar, X, Y, Board):- 	dentroTabuleiro(X,Y),
+												\+ isFree(X, Y, Board),
+												isCigar(X,Y,Board).
 												 
-validateTargetCoords(Player, X, Y, TargetX, TargetY, Board) :- 	dentroTabuleiro(TargetX,TargetY),
+validateTargetCoords(_, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
 																naoSiPropria(X,Y,TargetX,TargetY),
-																(isFree(TargetX,TargetY,Board);
-																(Player == ivory -> isCigar(TargetX,TargetY,Board);
-																 Player == cigar -> isIvory(TargetX,TargetY,Board))),
-																(vertical(X,Y,TargetX,TargetY);
-																 horizontal(X,Y,TargetX,TargetY);
-																 diagonal(X,Y,TargetX,TargetY)).
+																isFree(TargetX,TargetY,Board),
+																vertical(X,Y,TargetX,TargetY).
+validateTargetCoords(_, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isFree(TargetX,TargetY,Board),
+																horizontal(X,Y,TargetX,TargetY).
+validateTargetCoords(_, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isFree(TargetX,TargetY,Board),
+																diagonal(X,Y,TargetX,TargetY).
+validateTargetCoords(ivory, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isCigar(TargetX,TargetY,Board),
+																vertical(X,Y,TargetX,TargetY).
+validateTargetCoords(ivory, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isCigar(TargetX,TargetY,Board),
+																horizontal(X,Y,TargetX,TargetY).														
+validateTargetCoords(ivory, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isCigar(TargetX,TargetY,Board),
+																diagonal(X,Y,TargetX,TargetY).
+validateTargetCoords(cigar, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isIvory(TargetX,TargetY,Board),
+																vertical(X,Y,TargetX,TargetY).
+validateTargetCoords(cigar, X, Y, TargetX, TargetY, Board) :- dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isIvory(TargetX,TargetY,Board),
+																horizontal(X,Y,TargetX,TargetY).														
+validateTargetCoords(cigar, X, Y, TargetX, TargetY, Board) :- 	dentroTabuleiro(TargetX,TargetY),
+																naoSiPropria(X,Y,TargetX,TargetY),
+																isIvory(TargetX,TargetY,Board),
+																diagonal(X,Y,TargetX,TargetY).																
+
+
 
 getPieceofColor(Player, QueenOrBabyOrEmpty, Output) :- (QueenOrBabyOrEmpty == empty -> Output = empty;
 														Player == ivory ->
@@ -104,23 +139,25 @@ getPieceofColor(Player, QueenOrBabyOrEmpty, Output) :- (QueenOrBabyOrEmpty == em
 															(QueenOrBabyOrEmpty == queen -> Output = cigarQueen;
 															QueenOrBabyOrEmpty == baby -> Output = cigarBaby)).
 															
-checkReducedDistance(Player, CurrentX, CurrentY, TargetX, TargetY, BoardIn) :- (Player == ivory ->  findQueen(cigar, BoardIn, QueenX, QueenY);
-																				Player == cigar ->  findQueen(ivory, BoardIn, QueenX, QueenY)),
+checkReducedDistance(ivory, CurrentX, CurrentY, TargetX, TargetY, BoardIn) :-  findQueen(cigar, BoardIn, QueenX, QueenY),
 																				distance(CurrentX,CurrentY,QueenX,QueenY, DistanceCurrent),
 																				distance(TargetX, TargetY, QueenX, QueenY, DistanceTarget),
 																				DistanceCurrent > DistanceTarget .
-																				
+checkReducedDistance(cigar, CurrentX, CurrentY, TargetX, TargetY, BoardIn) :-  findQueen(ivory, BoardIn, QueenX, QueenY),
+																				distance(CurrentX,CurrentY,QueenX,QueenY, DistanceCurrent),
+																				distance(TargetX, TargetY, QueenX, QueenY, DistanceTarget),
+																				DistanceCurrent > DistanceTarget .
 % -------------------------------------------------------------------------
 % --------------------------- PLAY MAKING ---------------------------------
 % -------------------------------------------------------------------------
 														 
-getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut)) :-
+getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut), GameOver) :-
 				write('x= '), read(X),
 				write('y= '), read(Y), nl,
 				write('target x= '), read(TargetX),
 				write('target y= '), read(TargetY), nl,
 				Play = (Player, X, Y, TargetX, TargetY),
-				BoardOut ^ (makePlay(Play,(IvoryStack,CigarStack,Board), (IvoryStackOut, CigarStackOut, BoardOut))).
+				BoardOut ^ (makePlay(Play,(IvoryStack,CigarStack,Board), (IvoryStackOut, CigarStackOut, BoardOut), GameOver)).
 	
 % Play: 
 % 1. check stack. if <= 2, nope.
@@ -156,12 +193,10 @@ getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStack
 %				replace current to empty
 %				check-mate
 
-%makePlay(+(Player,X,Y,TargetX,TargetY), +(IvoryStack, CigarStack, Board), -(IvoryStackOut, CigarStackOut, BoardOut))
-makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)) :-
+%makePlay(+(Player,X,Y,TargetX,TargetY), +(IvoryStack, CigarStack, Board), -(IvoryStackOut, CigarStackOut, BoardOut),-GameOver)
+makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver) :-
 
 		validatePlayer(Player),
-		
-		\+ stackCritical(IvoryStack), \+ stackCritical(CigarStack),
 		
 		validateCurrentCoords(Player,X, Y, BoardIn),
 		validateTargetCoords(Player,X,Y,TargetX,TargetY,BoardIn),
@@ -175,14 +210,16 @@ makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStac
                 getPieceofColor(Player,baby,Output1),
                 setPiece(X, Y,Output1, BoardIn1, BoardOut),
                 (Player == ivory -> (IvoryStackOut is IvoryStack - 1, CigarStackOut is CigarStack);
-				 Player == cigar -> (IvoryStackOut is IvoryStack, CigarStackOut is CigarStack - 1))) ,!;
+				 Player == cigar -> (IvoryStackOut is IvoryStack, CigarStackOut is CigarStack - 1))),
+                GameOver = false, !;
              isBaby(TargetX,TargetY,BoardIn) ->
                 (getPieceofColor(Player,queen,Output),
                 setPiece(TargetX, TargetY,Output, BoardIn, BoardIn1),
                 getPieceofColor(Player,empty,Output1),
                 setPiece(X, Y,Output1, BoardIn1, BoardOut),
                 IvoryStackOut is IvoryStack,
-                CigarStackOut is CigarStack), !;
+                CigarStackOut is CigarStack), 
+                GameOver = false, !;
              isQueen(TargetX,TargetY,BoardIn) ->
                 (getPieceofColor(Player,queen,Output),
                 setPiece(TargetX, TargetY,Output, BoardIn, BoardIn1),
@@ -190,7 +227,7 @@ makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStac
                 setPiece(X, Y,Output1, BoardIn1, BoardOut),
                 IvoryStackOut is IvoryStack,
                 CigarStackOut is CigarStack,
-				write('CHECK MATE')), !), !;
+				GameOver = true), !), !;
 				
 		 isBaby(X,Y,BoardIn) ->
 			(isFree(TargetX,TargetY,BoardIn) ->
@@ -200,14 +237,16 @@ makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStac
 					getPieceofColor(Player, empty, Output1),
 					setPiece(X, Y, Output1, BoardIn1, BoardOut), 
 					IvoryStackOut is IvoryStack, 
-					CigarStackOut is CigarStack), !;
+					CigarStackOut is CigarStack), 
+					GameOver = false, !;
 			 isBaby(TargetX,TargetY,BoardIn) ->
 				(getPieceofColor(Player, baby, Output),
 				setPiece(TargetX, TargetY, Output, BoardIn, BoardIn1),
 				getPieceofColor(Player, empty, Output1),
 				setPiece(X, Y, Output1, BoardIn1, BoardOut), 
 				IvoryStackOut is IvoryStack, 
-				CigarStackOut is CigarStack), !;
+				CigarStackOut is CigarStack), 
+				GameOver = false, !;
 			 isQueen(TargetX,TargetY,BoardIn) ->
 				(getPieceofColor(Player, baby, Output),
 				setPiece(TargetX, TargetY, Output, BoardIn, BoardIn1),
@@ -215,16 +254,58 @@ makePlay((Player,X,Y,TargetX,TargetY),(IvoryStack,CigarStack,BoardIn),(IvoryStac
 				setPiece(X, Y, Output1, BoardIn1, BoardOut), 
 				IvoryStackOut is IvoryStack, 
 				CigarStackOut is CigarStack,
-				write('CHECK MATE!')), !), !
+				GameOver = true), !), !
 		).
 		
-insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)):- repeat,
-																													getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)) -> !; write('fail. ').
+insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver):- repeat,
+																															  getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver).
 
-play(Player, (IvoryStackIn,CigarStackIn,BoardIn)) :- 	\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
-														write(Player), write(' turn!'), nl,
-														insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut)),
-														(Player == ivory -> play(cigar, (IvoryStackOut,CigarStackOut,BoardOut));
-														Player == cigar -> play(ivory, (IvoryStackOut,CigarStackOut,BoardOut))).
-														
-bootPlay :- BoardIn ^ (emptyBoard(BoardIn), play(ivory, (20,20,BoardIn))).
+%%%%%%%%%%%%%%%%%%%%% PLAY CALLING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == false,
+														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
+														write(ivory), write(' turn!'), nl,
+														insistOnCorrectPlay(ivory, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
+														play(cigar, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew).												
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver), GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == false,
+														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
+														write(cigar), write(' turn!'), nl,
+														insistOnCorrectPlay(cigar, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
+														play(ivory, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew).
+
+%%%%%%%%%%%%%%%%%%%% DEFEAT CLAUSES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == true,
+														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true).
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == true,
+														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true).
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == true,
+														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true).
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == true,
+														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true).
+
+
+play(ivory, (IvoryStackIn, CigarStackIn, _), true) :- 	write('Cigar Won! '), nl,
+														write('Ivory had '), write(IvoryStackIn), write(' pieces left on the queen.'), nl,
+														write('Cigar had '), write(CigarStackIn), write(' pieces left on the queen.').
+play(cigar, (IvoryStackIn, CigarStackIn, _), true) :- 	write('Ivory Won! '), nl,
+														write('Ivory had '), write(IvoryStackIn), write(' pieces left on the queen.'), nl,
+														write('Cigar had '), write(CigarStackIn), write(' pieces left on the queen.').
+
+%%%%%%%%%%%%%%%%%%%% PLAY PREDICATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bootPlayDefault :- BoardIn ^ (emptyBoard(BoardIn), play(ivory, (20,20,BoardIn), false)).
+
+bootPlay(IvoryStackIn, CigarStackIn) :- \+ stackCritical(IvoryStackIn), \+ stackCritical(CigarStackIn),
+										BoardIn ^ (emptyBoard(BoardIn), play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

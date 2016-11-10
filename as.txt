@@ -1,9 +1,0 @@
-regra(moveEsq, jogador, TabIn, TabOut) :- 
-	{ Testa o tabuleiro In para ver se pode jogar }
-	{ altera o TabIn para o TabOut }
-
-regra(capturaPEca, Jogador, TabIn, TabOut) :-
-	{ testa condicoes }
-	{ altera In para Out }
-
-todos os tabs ( TabIn, Jogador, ListaTabuleiros):- findall(Tab, regra(ASDASD, TabIn, Jogador, Tab), ListaTabuleiros).
