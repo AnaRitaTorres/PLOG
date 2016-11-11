@@ -1,13 +1,30 @@
 % -------------------------------------------------------------------------
 % --------------------------- PLAY MAKING ---------------------------------
 % -------------------------------------------------------------------------
-														 
+
+matchInput(a, 0).
+matchInput(b, 1).
+matchInput(c, 2).
+matchInput(d, 3).
+matchInput(e, 4).
+matchInput(f, 5).
+matchInput(g, 6).
+matchInput(h, 7).
+matchInput(i, 8).
+matchInput(j, 9).
+matchInput(k, 10).
+matchInput(l, 11).
+
 getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut), GameOver) :-
 				write('x= '), read(X),
 				write('y= '), read(Y), nl,
+				matchInput(X,Z),
+				matchInput(Y,W),
 				write('target x= '), read(TargetX), 
 				write('target y= '), read(TargetY), nl,
-				Play = (Player, X, Y, TargetX, TargetY),
+				matchInput(TargetX,TargetZ),
+				matchInput(TargetY,TargetW),
+				Play = (Player, Z, W, TargetZ, TargetW),
 				BoardOut ^ (makePlay(Play,(IvoryStack,CigarStack,Board), (IvoryStackOut, CigarStackOut, BoardOut), GameOver)).
 	
 %makePlay(+(Player,X,Y,TargetX,TargetY), +(IvoryStack, CigarStack, Board), -(IvoryStackOut, CigarStackOut, BoardOut),-GameOver)
