@@ -123,7 +123,7 @@ executeMoveBabyQueen(cigar, X, Y, TargetX, TargetY, (IvoryStackIn, CigarStackIn,
 		GameOver = true.
 
 insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver):- repeat,
-																															  getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver).
+					  getPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOver).
 
 %%%%%%%%%%%%%%%%%%%%% PLAY CALLING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -148,14 +148,12 @@ play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	%clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == true,
 														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true).
 play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	%clr,
-														checkStack(IvoryStackIn, GameOver),	GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == true,
 														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true).
 play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	%clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == true,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true).
 play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false) :- 	%clr,
-														checkStack(IvoryStackIn, GameOver),	GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == true,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true).
 
