@@ -4,8 +4,7 @@
 
 
 :- use_module(library(random)).
-
-getRandomCoords(X) :- random(0, 11, X).
+getRandomCoords(X) :- random(0, 12, X).
 	
 getPlayBotRandom(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut), GameOver) :-
 				getRandomCoords(X), getRandomCoords(Y),
