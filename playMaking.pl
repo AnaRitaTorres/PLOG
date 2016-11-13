@@ -2,18 +2,18 @@
 % --------------------------- PLAY MAKING ---------------------------------
 % -------------------------------------------------------------------------
 
-matchInput(a, 0).
-matchInput(b, 1).
-matchInput(c, 2).
-matchInput(d, 3).
-matchInput(e, 4).
-matchInput(f, 5).
-matchInput(g, 6).
-matchInput(h, 7).
-matchInput(i, 8).
-matchInput(j, 9).
-matchInput(k, 10).
-matchInput(l, 11).
+matchInput(a, 0).	matchInput(0, a).
+matchInput(b, 1).	matchInput(1, b).
+matchInput(c, 2).	matchInput(2, c).
+matchInput(d, 3).	matchInput(3, d).
+matchInput(e, 4).	matchInput(4, e).
+matchInput(f, 5).	matchInput(5, f).
+matchInput(g, 6).	matchInput(6, g).
+matchInput(h, 7).	matchInput(7, h).
+matchInput(i, 8).	matchInput(8, i).
+matchInput(j, 9).	matchInput(9, j).
+matchInput(k, 10).	matchInput(10,k).
+matchInput(l, 11).	matchInput(11,l).
 
 getPlay(Player, Play, (IvoryStack, CigarStack, Board),(IvoryStackOut, CigarStackOut, BoardOut), GameOver) :-
 				write('x= '), read(X),
@@ -143,47 +143,69 @@ insistOnCorrectPlay(Player, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvorySt
 
 %%%%%%%%%%%%%%%%%%%%% PLAY CALLING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, human, Type) :- 	%clr,
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, human, Type) :- 	clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == false,
 														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
 														write(ivory), write(' turn!'), nl,
 														insistOnCorrectPlay(ivory, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
 														play(cigar, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, human).
-play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif1, Type) :- 	%clr,
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif1, Type) :- 	clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == false,
 														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
 														write(ivory), write(' turn!'), nl,
 														insistOnCorrectBotRandomPlay(ivory, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
-														play(cigar, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, botDif1).														
-play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, human, Type) :- 	%clr,
+														writeBotPlay(Play),
+														get_code(_), get_code(_),
+														play(cigar, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, botDif1).		
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif2, Type) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == false,
+														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
+														write(ivory), write(' turn!'), nl,
+														playBestBot(ivory, Play, (IvoryStackIn, IvoryStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
+														writeBotPlay(Play),
+														get_code(_), get_code(_),
+														play(cigar, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, botDif2).												
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, human, Type) :- 	clr,
 														checkStack(IvoryStackIn, GameOver), GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == false,
 														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
 														write(cigar), write(' turn!'), nl,
 														insistOnCorrectPlay(cigar, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
 														play(ivory, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, human).
-play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif1, Type) :- 	%clr,
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif1, Type) :- 	clr,
 														checkStack(IvoryStackIn, GameOver), GameOver == false,
 														checkStack(CigarStackIn, GameOver),	GameOver == false,
 														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
 														write(cigar), write(' turn!'), nl,
 														insistOnCorrectBotRandomPlay(cigar, Play, (IvoryStackIn, CigarStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
+														writeBotPlay(Play),
+														get_code(_), get_code(_),
 														play(ivory, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, botDif1).
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, botDif2, Type) :- 	clr,
+														checkStack(IvoryStackIn, GameOver),	GameOver == false,
+														checkStack(CigarStackIn, GameOver),	GameOver == false,
+														\+ printFancyBoard(IvoryStackIn,CigarStackIn,BoardIn),
+														write(cigar), write(' turn!'), nl,
+														playBestBot(cigar, Play, (IvoryStackIn, IvoryStackIn, BoardIn),(IvoryStackOut, CigarStackOut, BoardOut), GameOverNew),
+														writeBotPlay(Play),
+														get_code(_), get_code(_),
+														play(ivory, (IvoryStackOut,CigarStackOut,BoardOut), GameOverNew, Type, botDif2).	
 
 %%%%%%%%%%%%%%%%%%%% DEFEAT CLAUSES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	%clr,
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == true,
 														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
-play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	%clr,
+play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														checkStack(CigarStackIn, GameOver),	GameOver == true,
 														play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
-play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	%clr,
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														checkStack(IvoryStackIn, GameOver),	GameOver == true,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
-play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	%clr,
+play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														checkStack(CigarStackIn, GameOver),	GameOver == true,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
 
