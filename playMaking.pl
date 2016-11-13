@@ -210,12 +210,8 @@ play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
 
 
-play(ivory, (IvoryStackIn, CigarStackIn, _), true, _, _) :- 	write('Cigar Won! '), nl,
-																		write('Ivory had '), write(IvoryStackIn), write(' pieces left on the queen.'), nl,
-																		write('Cigar had '), write(CigarStackIn), write(' pieces left on the queen.').
-play(cigar, (IvoryStackIn, CigarStackIn, _), true,  _, _) :- 	write('Ivory Won! '), nl,
-																		write('Ivory had '), write(IvoryStackIn), write(' pieces left on the queen.'), nl,
-																		write('Cigar had '), write(CigarStackIn), write(' pieces left on the queen.').
+play(ivory, (IvoryStackIn, CigarStackIn, _), true, _, _) :- 	gameOverMenu(cigar, IvoryStackIn, CigarStackIn).
+play(cigar, (IvoryStackIn, CigarStackIn, _), true,  _, _) :- 	gameOverMenu(ivory, IvoryStackIn, CigarStackIn).
 
 %%%%%%%%%%%%%%%%%%%% PLAY PREDICATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

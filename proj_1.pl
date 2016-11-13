@@ -3,5 +3,5 @@
 		'playMaking.pl',
 		'pieceManagement.pl',
 		'printBoard.pl',
-		'ruleSet.pl',
+		'botManagement.pl',
 		'Interface.pl'].

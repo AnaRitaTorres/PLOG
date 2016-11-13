@@ -15,6 +15,7 @@ pMainMenu :-
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
 	
 mainMenu :-
+	clr, writeLogo, write('Press Enter to continue!'), get_code(_), clr,
 	pMainMenu,
 	read(I),
 	(
@@ -189,5 +190,84 @@ aboutMenu :-
 		aboutMenu
 	).
 	
-	
+gameOverMenu(Winner, IvoryStackIn, CigarStackIn) :-
+	 clr,
+	IvoryStackIn > 9, CigarStackIn > 9,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                         GAME OVER!                           ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                         '), write(Winner), write(' won!                           ||'), nl,
+	write('||             Ivory had '), write(IvoryStackIn), write(' pieces on their Queen!              ||'), nl,
+	write('||             Cigar had '), write(CigarStackIn), write(' pieces on their Queen!              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+gameOverMenu(Winner, IvoryStackIn, CigarStackIn) :-
+	 clr,
+	IvoryStackIn < 10, CigarStackIn > 9,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                         GAME OVER!                           ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                         '), write(Winner), write(' won!                           ||'), nl,
+	write('||             Ivory had '), write(IvoryStackIn), write(' '), write(' pieces on their Queen!              ||'), nl,
+	write('||             Cigar had '), write(CigarStackIn), write(' pieces on their Queen!              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+gameOverMenu(Winner, IvoryStackIn, CigarStackIn) :-
+	 clr,
+	IvoryStackIn > 9, CigarStackIn < 10,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                         GAME OVER!                           ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                         '), write(Winner), write(' won!                           ||'), nl,
+	write('||             Ivory had '), write(IvoryStackIn), write(' pieces on their Queen!              ||'), nl,
+	write('||             Cigar had '), write(CigarStackIn), write(' '), write(' pieces on their Queen!              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+gameOverMenu(Winner, IvoryStackIn, CigarStackIn) :-
+	 clr,
+	IvoryStackIn < 10, CigarStackIn < 10,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                         GAME OVER!                           ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                         '), write(Winner), write(' won!                           ||'), nl,
+	write('||             Ivory had '), write(IvoryStackIn), write(' '), write(' pieces on their Queen!              ||'), nl,
+	write('||             Cigar had '), write(CigarStackIn), write(' '), write(' pieces on their Queen!              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||                                                              ||'), nl,
+	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+writeLogo :-
+	clr,
+	write('                             ___                                                             '), nl,
+	write('                            (   )                                                            '), nl,
+	write(' ___ .-. .-.   .--. ___ .-.  | |   ___  .--. ___  ___    .--. ___  ___ .--.   .--. ___ .-.   '), nl,
+	write('(   )   "   \\ /    (   )   \\ | |  (   )/    (   )(   )  /    (   )(   /    \\ /    (   )   \\  '), nl,
+	write(' |  .-.  .-. |  .-. |  .-. . | |  " / |  .-. | |  | |  |  .-. | |  | |  .-. |  .-. |  .-. .  '), nl,
+	write(' | |  | |  | | |  | | |  | | | |," /  |  | | | |  | |  | |  | | |  | |  | | |  | | | |  | |  '), nl,
+	write(' | |  | |  | | |  | | |  | | | .  ".  |  |/  | "  | |  | |  | | |  | |  |/  |  |/  | |  | |  '), nl,
+	write(' | |  | |  | | |  | | |  | | | | `. \\ |  " _."  `-" |  | |  | | |  | |  " _.|  " _.| |  | |  '), nl,
+	write(' | |  | |  | | "  | | |  | | | |   \\ \\|  .".-.`.__. |  | "  | | |  ; |  .".-|  .".-| |  | |  '), nl,
+	write(' | |  | |  | "  `-" | |  | | | |    \\ "  `-" /___ | |  " `-"  " `-"  "  `-" "  `-" | |  | |  '), nl,
+	write('(___)(___)(___`.__.(___)(___(___ ) (___`.__."(   )" |   `._ / |".__." `.__." `.__.(___)(___) '), nl,
+	write('                                              ; `-" "       | |                              '), nl,
+	write('                                               .__."       (___)                             '), nl.
+
 
