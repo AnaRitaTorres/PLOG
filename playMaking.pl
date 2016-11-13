@@ -210,8 +210,8 @@ play(cigar, (IvoryStackIn,CigarStackIn,BoardIn), false, Type1, Type2) :- 	clr,
 														play(ivory, (IvoryStackIn,CigarStackIn,BoardIn), true, Type2, Type1).
 
 
-play(ivory, (IvoryStackIn, CigarStackIn, _), true, _, _) :- 	gameOverMenu(cigar, IvoryStackIn, CigarStackIn).
-play(cigar, (IvoryStackIn, CigarStackIn, _), true,  _, _) :- 	gameOverMenu(ivory, IvoryStackIn, CigarStackIn).
+play(ivory, (IvoryStackIn, CigarStackIn, _), true, _, _) :- 	gameOverMenu(cigar, IvoryStackIn, CigarStackIn), get_code(_), mainMenu.
+play(cigar, (IvoryStackIn, CigarStackIn, _), true,  _, _) :- 	gameOverMenu(ivory, IvoryStackIn, CigarStackIn), get_code(_), mainMenu.
 
 %%%%%%%%%%%%%%%%%%%% PLAY PREDICATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
