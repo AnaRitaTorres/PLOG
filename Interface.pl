@@ -16,12 +16,12 @@ pMainMenu :-
 	
 mainMenu :-
 	pMainMenu,
-	get_char(I),
+	read(I),
 	(
-		I='1'->playMenu;
-		I='2'->howToMenu;
-		I='3'->aboutMenu;
-		I='4';
+		I =:= 1 ->playMenu;
+		I =:= 2 ->howToMenu;
+		I =:= 3 ->aboutMenu;
+		I =:= 4;
 		
 		mainMenu
 	).
@@ -51,7 +51,7 @@ pDifMenu1 :-
 	write('||                                                              ||'), nl,
 	write('||                       1.Easy                                 ||'), nl,
 	write('||                       2.Hard                                 ||'), nl,
-	write('||                       3.Go Back                              ||'), nl,
+	write('||                       4.Go Back                              ||'), nl,
 	write('||                                                              ||'), nl,
 	write('||                                                              ||'), nl,
 	write('||                                                              ||'), nl,
@@ -66,7 +66,7 @@ pDifMenu2 :-
 	write('||                                                              ||'), nl,
 	write('||                       1.Easy                                 ||'), nl,
 	write('||                       2.Hard                                 ||'), nl,
-	write('||                       3.Go Back                              ||'), nl,
+	write('||                       4.Go Back                              ||'), nl,
 	write('||                                                              ||'), nl,
 	write('||                                                              ||'), nl,
 	write('||                                                              ||'), nl,
@@ -75,40 +75,41 @@ pDifMenu2 :-
 
 playMenu :-
 	pPlayMenu,
-	get_char(I),
+	read(I),
 	(
-		I='1'->bootPlay(20,human,human);
-		I='2'->difMenu1;
-		I='3'->difMenu2;
-		I='4'->mainMenu;
+		I =:= 1 ->bootPlay(20,human,human);
+		I =:= 2 ->difMenu1;
+		I =:= 3 ->difMenu2;
+		I =:= 4 ->mainMenu;
 		
 		playMenu
 	).
 
 difMenu1 :-
 	pDifMenu1,
-	get_char(I),
+	read(I),
 	(
-		I='1'->bootPlay(20,human,botDif1);
-		I='2'->bootPlay(20,human,botDif2);
-		I='4'->playMenu; 
+		I =:= 1 ->bootPlay(20,human,botDif1);
+		I =:= 2 ->bootPlay(20,human,botDif2);
+		I =:= 4 ->playMenu; 
 		
 		difMenu1
 	).
 
 difMenu2 :-
 	pDifMenu2,
-	get_char(I),
+	read(I),
 	(
-		I='1'->bootPlay(20,botDif1,botDif1);
-		I='2'->bootPlay(20,botDif2,botDif2);
-		I='4'->playMenu; 
+		I =:= 1 ->bootPlay(20,botDif1,botDif1);
+		I =:= 2 ->bootPlay(20,botDif2,botDif2);
+		I =:= 4 ->playMenu; 
 		
 		difMenu2
 	).
 	
 pHowToMenu :-
      clr,
+	get_code(_),nl,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
 	write('||                 MONKEY QUEEN - How To Play                   ||'), nl,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
@@ -121,9 +122,9 @@ pHowToMenu :-
 	write('||                                                              ||'), nl,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
 	write('Press Enter to Continue'),nl,
-	get_char(_),!,nl,
+	get_code(_),!,nl,
 	
-	 clr,
+	clr,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
 	write('||                 MONKEY QUEEN - How To Play                   ||'), nl,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
@@ -137,8 +138,8 @@ pHowToMenu :-
 	write('||                                                              ||'), nl,
 	write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
 	write('Press Enter to Continue'),nl,
-	get_char(_),!,nl,
-	
+	get_code(_),!,nl,
+		
 	 clr,
     write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
 	write('||                 MONKEY QUEEN - How To Play                   ||'), nl,
@@ -156,9 +157,9 @@ pHowToMenu :-
 
 howToMenu :-
 	pHowToMenu,
-	get_char(I),
+	read(I),
 	(
-		I='4'->mainMenu; 
+		I =:= 4 ->mainMenu; 
 		
 		howToMenu
 	).
@@ -181,9 +182,9 @@ pAboutMenu :-
 
 aboutMenu :-
 	pAboutMenu,
-	get_char(I),
+	read(I),
 	(
-		I='4'->mainMenu; 
+		I =:= 4 ->mainMenu; 
 		
 		aboutMenu
 	).
