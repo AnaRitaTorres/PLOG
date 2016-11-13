@@ -30,10 +30,10 @@ writeBotPlay((Player, X, Y, TargetX, TargetY)) :- 	write(Player), write(' bot mo
 %%%%%%%%%%%%%% IVORY %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-getBestPlay(ivory, [BoardIn], IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)) :-
+getBestPlay(ivory, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)) :-
 			getBest_IterateY(0, ivory, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)).
 
-getBest_IterateY(ThisY, ivory, [], _, _, (_,_,_,_,Score)) :- ThisY == 12, Score = -1.
+getBest_IterateY(ThisY, ivory, _, _, _, (_,_,_,_,Score)) :- ThisY == 12, Score = -1.
 getBest_IterateY(ThisY, ivory, BoardIn, IvoryStackIn, CigarStackIn,(X,Y,TargetX,TargetY,Score)) :-
 				ThisY < 12,
 				getBest_IterateX(0, ThisY, ivory, BoardIn, IvoryStackIn, CigarStackIn, (NewX, NewY, NewTargetX, NewTargetY, NewScore)),
@@ -41,7 +41,7 @@ getBest_IterateY(ThisY, ivory, BoardIn, IvoryStackIn, CigarStackIn,(X,Y,TargetX,
 				getBest_IterateY(AnotherY, ivory, BoardIn, IvoryStackIn, CigarStackIn, (OtherX,OtherY,OtherTargetX,OtherTargetY,OtherScore)),
 				judgeScores((X,Y,TargetX,TargetY,Score),(NewX,NewY,NewTargetX,NewTargetY,NewScore),(OtherX,OtherY,OtherTargetX,OtherTargetY,OtherScore)).
 
-getBest_IterateX(ThisX, _, ivory, [], _, _, (_,_,_,_,Score)) :- ThisX == 12, Score = -1.
+getBest_IterateX(ThisX, _, ivory, _, _, _, (_,_,_,_,Score)) :- ThisX == 12, Score = -1.
 getBest_IterateX(ThisX, ThisY, ivory, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)) :-
 				ThisX \= 12,
 				((isIvory(ThisX, ThisY, BoardIn) ->
@@ -55,7 +55,7 @@ getBest_IterateX(ThisX, ThisY, ivory, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,
 getBestPlay(cigar, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)) :-
 			getBest_IterateY(0, cigar, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)).
 
-getBest_IterateY(ThisY, cigar, [], _, _, (_,_,_,_,Score)) :- ThisY == 12, Score = -1.
+getBest_IterateY(ThisY, cigar, _, _, _, (_,_,_,_,Score)) :- ThisY == 12, Score = -1.
 getBest_IterateY(ThisY, cigar, BoardIn, IvoryStackIn, CigarStackIn,(X,Y,TargetX,TargetY,Score)) :-
 				ThisY < 12,
 				getBest_IterateX(0, ThisY, cigar, BoardIn, IvoryStackIn, CigarStackIn, (NewX, NewY, NewTargetX, NewTargetY, NewScore)),
@@ -63,7 +63,7 @@ getBest_IterateY(ThisY, cigar, BoardIn, IvoryStackIn, CigarStackIn,(X,Y,TargetX,
 				getBest_IterateY(AnotherY, cigar, BoardIn, IvoryStackIn, CigarStackIn, (OtherX,OtherY,OtherTargetX,OtherTargetY,OtherScore)),
 				judgeScores((X,Y,TargetX,TargetY,Score),(NewX,NewY,NewTargetX,NewTargetY,NewScore),(OtherX,OtherY,OtherTargetX,OtherTargetY,OtherScore)).
 
-getBest_IterateX(ThisX, _, cigar, [], _, _, (_,_,_,_,Score)) :- ThisX == 12, Score = -1.
+getBest_IterateX(ThisX, _, cigar, _, _, _, (_,_,_,_,Score)) :- ThisX == 12, Score = -1.
 getBest_IterateX(ThisX, ThisY, cigar, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,TargetX,TargetY,Score)) :-
 				ThisX \= 12,
 				((isCigar(ThisX, ThisY, BoardIn) ->
@@ -77,7 +77,7 @@ getBest_IterateX(ThisX, ThisY, cigar, BoardIn, IvoryStackIn, CigarStackIn, (X,Y,
 getBestTarget(Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (X, Y, TargetX, TargetY, Score)) :-
 			getBestTarget_IterateY(0, Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (X, Y, TargetX, TargetY, Score)).
 
-getBestTarget_IterateY(IterY, _, _, _, [], _, _, (_,_,_,_, Score)) :- IterY == 12, Score = -1.
+getBestTarget_IterateY(IterY, _, _, _, _, _, _, (_,_,_,_, Score)) :- IterY == 12, Score = -1.
 getBestTarget_IterateY(IterY, Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (X, Y, TargetX, TargetY, Score)) :- 
 						IterY \= 12,
 						getBestTarget_IterateX(0, IterY, Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (NewX, NewY, NewTargetX, NewTargetY, NewScore)),
@@ -85,7 +85,7 @@ getBestTarget_IterateY(IterY, Player, ThisX, ThisY, BoardIn, IvoryStackIn, Cigar
 						getBestTarget_IterateY(AnotherY, Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (OtherX, OtherY, OtherTargetX, OtherTargetY, OtherScore)),
 						judgeScores((X,Y,TargetX,TargetY,Score),(NewX,NewY,NewTargetX,NewTargetY,NewScore),(OtherX,OtherY,OtherTargetX,OtherTargetY,OtherScore)).
 
-getBestTarget_IterateX(IterX, _, _, _, _, [], _, _, (_,_,_,_, Score)) :- IterX == 12, Score = -1.
+getBestTarget_IterateX(IterX, _, _, _, _, _, _, _, (_,_,_,_, Score)) :- IterX == 12, Score = -1.
 getBestTarget_IterateX(IterX, IterY, Player, ThisX, ThisY, BoardIn, IvoryStackIn, CigarStackIn, (X, Y, TargetX, TargetY, Score)) :-
 						IterX \= 12,
 						((makePlay((Player,ThisX,ThisY,IterX,IterY),(IvoryStackIn,CigarStackIn,BoardIn),(IvoryStackOut, CigarStackOut, _), GameOver) ->
