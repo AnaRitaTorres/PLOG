@@ -35,6 +35,7 @@ getNumberAtCoord(X, Y, Number, Board) :-
 	nth0(X, Row, Number).
 
 % This predicate sets a matrix's element.
+
 setNumberAtCoord(X, Y, Number, BoardIn, BoardOut) :- 	setLineAux(0,X,Y,Number,BoardIn,BoardOut), !.
 
 setLineAux(_,_,_,_,[],[]).
@@ -107,6 +108,7 @@ getIndexedNumbers(Board, Indexed) :-
 	indexNumbers(Numbers, Indexed).
 
 % creates a NxN list
+
 createEmptySolution(N, Result) :-
 	createEmptySolutionAux(N, N, Result).
 
@@ -124,3 +126,66 @@ initRegions(Board, [], Board).
 initRegions(Board, [[CurrIndex, _, X, Y] | Tail ], Result) :-
 	setNumberAtCoord(X, Y, CurrIndex, Board, NewBoard),
 	initRegions(NewBoard, Tail, Result).
+
+% get a list that, for a cell, gets the first obstacle in each vertical or horizontal direction
+% [VU, VD, HL, HR]. ex: [1, -1, 2, 1] means that region 1 is obstructing its right and up sides
+% and no region is obstructing its down side.
+
+getObstacles(X, Y, Board, List) :-
+	getNumberAtCoord(X, Y, Number, Board),
+
+	% Up
+	getObstacle(X, Y, 0, -1, Board, ObstacleUp),
+
+	% Down
+	getObstacle(X, Y, 0, 1, Board, ObstacleDown),
+
+	% Left
+	getObstacle(X, Y, -1, 0, Board, ObstacleLeft),
+
+	% Right
+	getObstacle(X, Y, 1, 0, Board, ObstacleRight),
+
+	List = [ObstacleUp, ObstacleDown, ObstacleLeft, ObstacleRight].
+
+% Up
+getObstacle(X, 0, 0, -1, Board, Obstacle) :-
+	getNumberAtCoord(X, 0, Obstacle, Board).
+
+% Down
+getObstacle(X, Y, 0, 1, Board, Obstacle) :-
+	length(Board, A),
+	Y #= ( A - 1 ),
+	getNumberAtCoord(X, Y, Obstacle, Board).
+
+% Left
+getObstacle(0, Y, -1, 0, Board, Obstacle) :-
+	getNumberAtCoord(0, Y, Obstacle, Board).
+
+% Right
+getObstacle(X, Y, 1, 0, Board, Obstacle) :-
+	length(Board, A),
+	X #= (A - 1),
+	getNumberAtCoord(X, Y, Obstacle, Board).
+
+% This predicate gets the obstacle. IF current == -1, stop! Else, continue.
+
+getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
+	
+	Xnow is X + IncX,
+	Ynow is Y + IncY,
+
+	getNumberAtCoord(Xnow, Ynow, NumberNow, Board),
+
+	NumberNow #\= -1,
+	!,
+	Obstacle #= NumberNow.
+
+getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
+	
+	Xnow is X + IncX,
+	Ynow is Y + IncY,
+
+	getNumberAtCoord(Xnow, Ynow, NumberNow, Board),
+
+	getObstacle(Xnow, Ynow, IncX, IncY, Board, Obstacle).
