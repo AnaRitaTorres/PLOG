@@ -20,16 +20,24 @@ solver(Board, Result) :-
 	% board is always square; calculate its side.	
 	length(Board, N),
 
-	getIndexedNumbers(Board, Indexed), nl, nl, write(Indexed), nl, nl,
-	createEmptySolution(N, EmptyResult),
-	initRegions(EmptyResult, Indexed, Result).
+	getIndexedNumbers(Board, Indexed),
+	length(Indexed, MaxRegions1),
+	MaxRegions #= MaxRegions1 - 1,
 
+	createEmptySolution(N, MaxRegions, EmptyResult),
+	initRegions(EmptyResult, Indexed, InitedRegions),
+
+	constrainCells(Board, InitedRegions),
+	%constrainArea
+
+	flatten_levels(InitedRegions, Result),
+	labeling([], Result).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%% AUXILARY PREDICATES %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % This predicate gets a matrix's element.
-
+getNumberAtCoord(-1,-1,-1,_).
 getNumberAtCoord(X, Y, Number, Board) :-
 	nth0(Y, Board, Row),
 	nth0(X, Row, Number).
@@ -49,8 +57,9 @@ setLineAux(Ynow, X, Y, Number, [Line | Tail], [Line | Tail2]) :- 	Ynow \= Y,
 setColAux(_,_,_,[],[]).
 setColAux(X, X, Number, [ _ | Tail], [Number | Tail2]) :- 	Xnow is X + 1,
 															setColAux(Xnow, X, Number, Tail, Tail2).																	
-setColAux(Xnow, X, Number, [Element | Tail], [Element | Tail2]) :-  Xnow \= X,
+setColAux(Xnow, X, Number, [Element | Tail], [Head | Tail2]) :-  Xnow \= X,
 																	Xnow2 is Xnow + 1,
+																	Head #= Element,
 																	setColAux(Xnow2, X, Number, Tail, Tail2).
 
 
@@ -109,8 +118,9 @@ getIndexedNumbers(Board, Indexed) :-
 
 % creates a NxN list
 
-createEmptySolution(N, Result) :-
-	createEmptySolutionAux(N, N, Result).
+createEmptySolution(N, MaxRegions, Result) :-
+	createEmptySolutionAux(N, N, Result),
+	constrainDomain(MaxRegions, Result).
 
 createEmptySolutionAux(_, 0, []).
 createEmptySolutionAux(N, NN, [Head | Tail]) :-
@@ -119,6 +129,10 @@ createEmptySolutionAux(N, NN, [Head | Tail]) :-
 	NN1 is NN - 1,
 	createEmptySolutionAux(N, NN1, Tail).
 
+constrainDomain(_,[]).
+constrainDomain(MaxRegions, [Head | Tail]) :-
+	domain(Head, 0, MaxRegions),
+	constrainDomain(MaxRegions, Tail).
 
 % This is the basic frame for the regions to be constructed upon.
 
@@ -149,43 +163,71 @@ getObstacles(X, Y, Board, List) :-
 	List = [ObstacleUp, ObstacleDown, ObstacleLeft, ObstacleRight].
 
 % Up
-getObstacle(X, 0, 0, -1, Board, Obstacle) :-
-	getNumberAtCoord(X, 0, Obstacle, Board).
+getObstacle(X, -1, 0, -1, Board, [-1,-1,-1]).
 
 % Down
-getObstacle(X, Y, 0, 1, Board, Obstacle) :-
-	length(Board, A),
-	Y #= ( A - 1 ),
-	getNumberAtCoord(X, Y, Obstacle, Board).
+getObstacle(X, Y, 0, 1, Board, [-1,-1,-1]) :-
+	length(Board, Y).
 
 % Left
-getObstacle(0, Y, -1, 0, Board, Obstacle) :-
-	getNumberAtCoord(0, Y, Obstacle, Board).
+getObstacle(-1, Y, -1, 0, Board, [-1,-1,-1]).
 
 % Right
-getObstacle(X, Y, 1, 0, Board, Obstacle) :-
-	length(Board, A),
-	X #= (A - 1),
-	getNumberAtCoord(X, Y, Obstacle, Board).
+getObstacle(X, Y, 1, 0, Board, [-1,-1,-1]) :-
+	length(Board, X).
 
 % This predicate gets the obstacle. IF current == -1, stop! Else, continue.
 
 getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
 	
-	Xnow is X + IncX,
-	Ynow is Y + IncY,
+	getNumberAtCoord(X, Y, NumberNow, Board),
 
-	getNumberAtCoord(Xnow, Ynow, NumberNow, Board),
+	Xnow #= X + IncX,
+	Ynow #= Y + IncY,
 
 	NumberNow #\= -1,
 	!,
-	Obstacle #= NumberNow.
+	Obstacle = [NumberNow, X, Y].
 
 getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
 	
-	Xnow is X + IncX,
-	Ynow is Y + IncY,
+	getNumberAtCoord(X, Y, NumberNow, Board),
 
-	getNumberAtCoord(Xnow, Ynow, NumberNow, Board),
+	Xnow #= X + IncX,
+	Ynow #= Y + IncY,
+	
+	Number #= -1,
 
 	getObstacle(Xnow, Ynow, IncX, IncY, Board, Obstacle).
+
+
+% This is predicate that thins down the regions for any cells.
+
+constrainCells(Board, Regions) :-
+	length(Board, N),
+	constrainRows(Board, Regions, 0, N).
+constrainRows(Board, Regions, N,N).
+constrainRows(Board, Regions, Y, N) :-
+	constrainCols(Board, Regions, 0, Y, N),
+	Y1 #= Y + 1,
+	constrainRows(Board, Regions, Y1, N).
+constrainCols(Board, Regions, N, _, N).
+constrainCols(Board, Regions, X, Y, N) :-
+	constrainCell(X, Y, Board, Regions),
+	X1 #= X + 1,
+	constrainCols(Board, Regions, X1, Y, N).
+
+% A predicate to thin down the cell. Checks for the regions up, down, left and right of it, and sets its domain to those values.
+
+constrainCell(X, Y, Board, Regions) :-
+	getObstacles(X, Y, Board, [[OU_V, OU_X, OU_Y], [OD_V, OD_X, OD_Y], [OL_V, OL_X, OL_Y], [OR_V, OR_X, OR_Y]]),
+
+	getNumberAtCoord(OU_X, OU_Y, RegionUP, Regions),
+	getNumberAtCoord(OD_X, OD_Y, RegionDOWN, Regions),
+	getNumberAtCoord(OL_X, OL_Y, RegionLEFT, Regions),
+	getNumberAtCoord(OR_X, OR_Y, RegionRIGHT, Regions),
+
+	getNumberAtCoord(X,Y,Var,Regions),
+
+	Var in {RegionUP,RegionDOWN,RegionLEFT,RegionRIGHT},
+	Var #>= 0.
