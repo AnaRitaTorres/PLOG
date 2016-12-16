@@ -45,7 +45,11 @@ solver(Board, Solution) :-
 	flatten_list(Result, Flat_Solution),
 
 	% Generate solution
+	statistics(walltime, _),
 	labeling([], Flat_Solution),
+	statistics(walltime, [_, Elapsed | _]),
+	format('Time taken to find solution: ~3d seconds', Elapsed), nl,
+	fd_statistics,
 
 	% Convert back, so it's easier to print.
 	list_to_matrix(Flat_Solution, N, Solution).
@@ -85,7 +89,7 @@ setColAux(Xnow, X, Number, [Element | Tail], [Head | Tail2]) :-  Xnow \= X,
 getNumbers(Board, Numbers) :-
 	length(Board, N),
 	getNumbersInRows(Board, 0, N, List),
-	flatten_levels(List, Numbers).
+	flatten_list(List, Numbers).
 
 getNumbersInRows(_, N, N, []).
 getNumbersInRows(Board, Y, N, [Head | Tail]) :-
