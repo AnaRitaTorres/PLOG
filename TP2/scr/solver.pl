@@ -46,7 +46,7 @@ solver(Board, Solution) :-
 
 	% Generate solution
 	statistics(walltime, _),
-	labeling([], Flat_Solution),
+	labeling([bisect], Flat_Solution),
 	statistics(walltime, [_, Elapsed | _]),
 	format('Time taken to find solution: ~3d seconds', Elapsed), nl,
 	fd_statistics,

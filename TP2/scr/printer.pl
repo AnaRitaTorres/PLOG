@@ -4,7 +4,8 @@
 
 % TODO
 % A Predicate to print the board
-printElement(Elem) :- write(Elem).
+printElement(Elem) :- Elem #>= 10, write(Elem).
+printElement(Elem) :- Elem #< 10, write(Elem), write(' ').
 printBoard([]).
 printBoard([Row | Tail]) :-
 	printRow(Row), nl,
