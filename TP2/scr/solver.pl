@@ -15,6 +15,12 @@
 % (this 1 is the square occupying the number) equals the total area of the region!
 % Then, we just ID the region and see all the possible regions with restrictions...
 
+% An example of an original board and the generated solution:
+% -1  4 -1 -1				0  0  0  0
+% -1 -1  0 -1				3  0  1  2		This means the 4 on coordinates (x=1, y=0) became the capital of region 0, which spreads
+% -1 -1 -1  4		-->		3  2  2  2		as shown. The region's area is 5, which is the original 4 + 1.
+%  4 -1 -1 -1				3  3  3  2
+
 solver(Board, Solution) :-
 	
 	% board is always square; calculate its side.	
@@ -27,6 +33,9 @@ solver(Board, Solution) :-
 
 	% create an empty matrix, to be restricted
 	createEmptySolution(N, MaxRegions, EmptyResult),
+
+	% initiate statistics
+	statistics(walltime, _),
 
 	% start off the regions where the numbers are on the original board (these are called capitals). Place the capital index on the matrix, not the length.
 	initRegions(EmptyResult, Indexed, Result),
@@ -45,8 +54,9 @@ solver(Board, Solution) :-
 	flatten_list(Result, Flat_Solution),
 
 	% Generate solution
-	statistics(walltime, _),
 	labeling([bisect], Flat_Solution),
+
+	% Obtain and print statistics
 	statistics(walltime, [_, Elapsed | _]),
 	format('Time taken to find solution: ~3d seconds', Elapsed), nl,
 	fd_statistics,
