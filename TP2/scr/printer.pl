@@ -24,14 +24,14 @@ printElement(Elem-Indexed, X, Y) :-
 	write(Area), write(' '),
 	printColumnSeparator.
 
-printElement(Elem-Indexed, X, Y) :-
-	member([Elem, _, CapitalX, CapitalY], Indexed),
+printElement(Elem-Indexed, X, _) :-
+	member([Elem, _, CapitalX, _], Indexed),
 	CapitalX #= X,
 	write(' |'),
 	printColumnSeparator.
 
-printElement(Elem-Indexed, X, Y) :-
-	member([Elem, _, CapitalX, CapitalY], Indexed),
+printElement(Elem-Indexed, _, Y) :-
+	member([Elem, _, _, CapitalY], Indexed),
 	CapitalY #= Y,
 	write('--'),
 	printColumnSeparator.
@@ -41,7 +41,7 @@ printSolution(Solution-Indexed) :-
 	nth0(0, Solution, Row), write(' '), printRowHeader(Row), nl,
 	printSolutionAux(Solution-Indexed, 0, N).
 
-printSolutionAux(Solution-Indexed, N, N).
+printSolutionAux(_-_, N, N).
 printSolutionAux(Solution-Indexed, I, N) :-
 	nth0(I, Solution, Row),
 	printColumnSeparator,
@@ -60,13 +60,13 @@ printRow(Row-Indexed, X, Y, N):-
 printColumnSeparator :- write('|').
 
 printRowHeader([]).
-printRowHeader([Elem | Tail]) :-
+printRowHeader([_| Tail]) :-
  	printRowUnderline,
  	write(' '),
  	printRowHeader(Tail).
 
 printRowAppearance([]).
-printRowAppearance([Elem | Tail]) :-
+printRowAppearance([_ | Tail]) :-
 	printRowUnderline,
 	printColumnSeparator,
 	printRowAppearance(Tail).

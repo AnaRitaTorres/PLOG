@@ -176,7 +176,7 @@ initRegions(Board, [[CurrIndex, _, X, Y] | Tail ], Result) :-
 % If our cell already belongs to a region, it gets all obstacles to that region.
 
 getObstacles(X, Y, Board, List) :-
-	getNumberAtCoord(X, Y, Number, Board),
+	getNumberAtCoord(X, Y, _, Board),
 
 	% Up
 	getObstacle(X, Y, 0, -1, Board, ObstacleUp),
@@ -193,27 +193,24 @@ getObstacles(X, Y, Board, List) :-
 	List = [ObstacleUp, ObstacleDown, ObstacleLeft, ObstacleRight].
 
 % Up
-getObstacle(X, -1, 0, -1, Board, [-1,-1,-1]).
+getObstacle(_, -1, 0, -1, _, [-1,-1,-1]).
 
 % Down
-getObstacle(X, Y, 0, 1, Board, [-1,-1,-1]) :-
+getObstacle(_, Y, 0, 1, Board, [-1,-1,-1]) :-
 	length(Board, Y).
 
 % Left
-getObstacle(-1, Y, -1, 0, Board, [-1,-1,-1]).
+getObstacle(-1, _, -1, 0, _, [-1,-1,-1]).
 
 % Right
-getObstacle(X, Y, 1, 0, Board, [-1,-1,-1]) :-
+getObstacle(X, _, 1, 0, Board, [-1,-1,-1]) :-
 	length(Board, X).
 
 % This predicate gets the obstacle. IF current == -1, stop! Else, continue.
 
-getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
+getObstacle(X, Y, _, _, Board, Obstacle) :-
 	
 	getNumberAtCoord(X, Y, NumberNow, Board),
-
-	Xnow #= X + IncX,
-	Ynow #= Y + IncY,
 
 	NumberNow #\= -1,
 	!,
@@ -221,13 +218,11 @@ getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
 
 getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
 	
-	getNumberAtCoord(X, Y, NumberNow, Board),
+	getNumberAtCoord(X, Y, _, Board),
 
 	Xnow #= X + IncX,
 	Ynow #= Y + IncY,
 	
-	Number #= -1,
-
 	getObstacle(Xnow, Ynow, IncX, IncY, Board, Obstacle).
 
 
@@ -239,19 +234,19 @@ getObstacle(X, Y, IncX, IncY, Board, Obstacle) :-
 constrainCells(Board, Regions) :-
 	length(Board, N),
 	constrainRows(Board, Regions, 0, N).
-constrainRows(Board, Regions, N,N).
+constrainRows(_, _, N,N).
 constrainRows(Board, Regions, Y, N) :-
 	constrainCols(Board, Regions, 0, Y, N),
 	Y1 #= Y + 1,
 	constrainRows(Board, Regions, Y1, N).
-constrainCols(Board, Regions, N, _, N).
+constrainCols(_,_, N, _, N).
 constrainCols(Board, Regions, X, Y, N) :-
 	constrainCell(X, Y, Board, Regions),
 	X1 #= X + 1,
 	constrainCols(Board, Regions, X1, Y, N).
 
 constrainCell(X, Y, Board, Regions) :-
-	getObstacles(X, Y, Board, [[OU_V, OU_X, OU_Y], [OD_V, OD_X, OD_Y], [OL_V, OL_X, OL_Y], [OR_V, OR_X, OR_Y]]),
+	getObstacles(X, Y, Board, [[_, OU_X, OU_Y], [_, OD_X, OD_Y], [_ ,OL_X, OL_Y], [_, OR_X, OR_Y]]),
 
 	getNumberAtCoord(OU_X, OU_Y, RegionUP, Regions),
 	getNumberAtCoord(OD_X, OD_Y, RegionDOWN, Regions),
@@ -270,7 +265,7 @@ constrainCell(X, Y, Board, Regions) :-
 
 constrainAreas(_,_, Length, Length).
 constrainAreas(Indexed, Regions, Index, Length) :-	
-	constrainArea(Index, Indexed, Regions, GottenArea),
+	constrainArea(Index, Indexed, Regions,_),
 	IndexNew #= Index + 1,
 	constrainAreas(Indexed, Regions, IndexNew, Length).
 
@@ -280,7 +275,7 @@ constrainArea(Index, Indexed, Regions, GottenArea) :-
 	getArea(Index, _, Regions, GottenArea), 
 	GottenArea #= Area.
 
-getArea(Index, Area, Regions, GottenArea) :-
+getArea(Index, _, Regions, GottenArea) :-
 	length(Regions, N),
 	getAreaRows(0, N, Index, Regions, GottenArea).
 
