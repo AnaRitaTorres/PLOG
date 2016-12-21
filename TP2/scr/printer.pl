@@ -2,10 +2,6 @@
 %%PRINTER%%
 %%%%%%%%%%%
 %→↑←↓
-solvePuzzle(Board) :-
-	solver(Board, Result),
-	getIndexedNumbers(Board, Indexed),
-	printSolution(Result-Indexed), !.
 
 % A Predicate to print the board
 
@@ -118,6 +114,43 @@ printRowAppearance([_ | Tail]) :-
 	printColumnSeparator,
 	printRowAppearance(Tail).
 printRowUnderline :- write('___').
+
+printUnsolvedPuzzle(Puzzle):-
+	length(Puzzle, N),
+	nth0(0, Puzzle, Row),
+	write(' '), printRowHeader(Row),
+	nl,
+	printUnsolvedPuzzle_Aux(Puzzle, 0, N).
+
+printUnsolvedPuzzle_Aux(_,N,N).
+printUnsolvedPuzzle_Aux(Puzzle, Y, N) :-
+	nth0(Y,Puzzle, Row),
+	printColumnSeparator,
+	printUnsolvedPuzzleRow(Row, 0, N),
+	NewY #= Y + 1,
+	nl,
+	printColumnSeparator,
+	printRowAppearance(Row),
+	nl,
+	printUnsolvedPuzzle_Aux(Puzzle, NewY, N).
+
+printUnsolvedPuzzleRow(_, N, N).
+printUnsolvedPuzzleRow(Row, X, N) :-
+	nth0(X, Row, Elem),
+	printUnsolvedElem(Elem),
+	printColumnSeparator,
+	NewX #= X + 1,
+	printUnsolvedPuzzleRow(Row, NewX, N).
+
+printUnsolvedElem(Elem) :-
+	Elem >= 10,
+	write(Elem), write(' ').
+printUnsolvedElem(Elem) :-
+	Elem < 0,
+	write('   ').
+printUnsolvedElem(Elem) :-
+	Elem < 10,
+	write(' '), write(Elem), write(' ').
 
 % A predicate to convert a list to a matrix of a given side.
 % Used to convert the flattened out solution back into an easier-to-print matrix.
