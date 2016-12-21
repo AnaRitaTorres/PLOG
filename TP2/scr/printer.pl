@@ -23,59 +23,85 @@ printElement(Elem-Indexed, X, Y,_) :-
 	write(' '),
 	printColumnSeparator.
 
-printElement(Elem-Indexed, X, Y,N) :-
-	member([Elem, _, CapitalX, _], Indexed),
+	
+	
+	
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalX #= X,
-	Y #> 0,
-	Size is N -1,
-	Y #< Size,
+	Y  #< CapitalY,
+	Ynow is Y - 1,
+	member([Elem, _,CapitalX, Ynow], Indexed),
 	write(' |'),
 	write(' '),
 	printColumnSeparator.
 	
-printElement(Elem-Indexed, X, Y,N) :-
-	member([Elem, _, CapitalX, _], Indexed),
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalX #= X,
-	Y #= 0,
-	write(' ?'),
-	write(' '),
-	printColumnSeparator.
-	
-printElement(Elem-Indexed, X, Y,N) :-
-	member([Elem, _, CapitalX, _], Indexed),
-	CapitalX #= X,
-	Size is N -1,
-	Y #= Size,
-	write(' !'),
-	write(' '),
-	printColumnSeparator.
-
-printElement(Elem-Indexed, X, Y,N) :-
-	member([Elem, _, _, CapitalY], Indexed),
-	CapitalY #= Y,
-	X #> 0,
-	Size is N -1,
-	X #< Size,
-	write('--'),
-	write(' '),
-	printColumnSeparator.
-	
-printElement(Elem-Indexed,X,Y,N) :-
-	member([Elem, _, _, CapitalY], Indexed),
-	CapitalY #= Y,
-	Size is N-1,
-	X #= Size,
-	write('->'),
+	Y  #> CapitalY,
+	Ynow is Y + 1,
+	member([Elem, _,CapitalX, Ynow], Indexed),
+	write(' |'),
 	write(' '),
 	printColumnSeparator.
 	
 printElement(Elem-Indexed,X,Y,_) :-
-	member([Elem, _, _, CapitalY], Indexed),
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalX #= X,
+	Y  #< CapitalY,
+	write(' !'),
+	write(' '),
+	printColumnSeparator.
+
+
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalX #= X,
+	Y #> CapitalY,
+	write(' ?'),
+	write(' '),
+	printColumnSeparator.
+	
+
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalY #= Y,
-	X #= 0,
+	X  #< CapitalX,
+	Xnow is X - 1,
+	member([Elem, _,Xnow, CapitalY], Indexed),
+	write('--'),
+	write(' '),
+	printColumnSeparator.
+	
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalY #= Y,
+	X  #> CapitalX,
+	Xnow is X + 1,
+	member([Elem, _,Xnow, CapitalY], Indexed),
+	write('--'),
+	write(' '),
+	printColumnSeparator.
+	
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalY #= Y,
+	X  #< CapitalX,
 	write('<-'),
 	write(' '),
 	printColumnSeparator.
+
+
+printElement(Elem-Indexed,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalY #= Y,
+	X  #> CapitalX,
+	write('->'),
+	write(' '),
+	printColumnSeparator.
+
+
 
 printSolution(Solution-Indexed) :-
 	length(Solution, N),
