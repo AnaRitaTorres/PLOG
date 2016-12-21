@@ -1,12 +1,10 @@
 %%%%%%%%%%%
 %%PRINTER%%
 %%%%%%%%%%%
-%→↑←↓
 
-% A Predicate to print the board
 
-% [IndiceRegiao, AreaTotal-1, X, Y]
-printElement(Elem-Indexed, X, Y,_) :-
+% A predicate to print the element, whether it is a capital, a dash or an arrow.
+printElement(Elem-Indexed-Solution, X, Y,_) :-
 	member([Elem, Area, CapitalX, CapitalY], Indexed),
 	CapitalX #= X, CapitalY #= Y,
 	Area #>= 10,
@@ -14,7 +12,7 @@ printElement(Elem-Indexed, X, Y,_) :-
 	write(Area),
 	printColumnSeparator.
 
-printElement(Elem-Indexed, X, Y,_) :-
+printElement(Elem-Indexed-Solution, X, Y,_) :-
 	member([Elem, Area, CapitalX, CapitalY], Indexed),
 	CapitalX #= X, CapitalY #= Y,
 	Area #< 10,
@@ -22,86 +20,98 @@ printElement(Elem-Indexed, X, Y,_) :-
 	write(Area),
 	write(' '),
 	printColumnSeparator.
+	
+% ^
+printElement(Elem-Indexed-Solution,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalX #= X,
+	Y  #< CapitalY,
 
-	
-	
-	
-printElement(Elem-Indexed,X,Y,_) :-
+	isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1),
+
+	write(' ^'),
+	write(' '),
+	printColumnSeparator.
+
+printElement(Elem-Indexed-Solution,X,Y,_) :-
 	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalX #= X,
 	Y  #< CapitalY,
-	Ynow is Y - 1,
-	member([Elem, _,CapitalX, Ynow], Indexed),
+
+	\+ isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1),
+
 	write(' |'),
 	write(' '),
 	printColumnSeparator.
-	
-printElement(Elem-Indexed,X,Y,_) :-
+
+% v
+printElement(Elem-Indexed-Solution,X,Y,_) :-
 	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalX #= X,
-	Y  #> CapitalY,
-	Ynow is Y + 1,
-	member([Elem, _,CapitalX, Ynow], Indexed),
-	write(' |'),
-	write(' '),
-	printColumnSeparator.
-	
-printElement(Elem-Indexed,X,Y,_) :-
-	member([Elem, _,CapitalX, CapitalY], Indexed),
-	CapitalX #= X,
-	Y  #< CapitalY,
+	Y #> CapitalY,
+
+	isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1),
+
 	write(' !'),
 	write(' '),
 	printColumnSeparator.
 
-
-printElement(Elem-Indexed,X,Y,_) :-
+printElement(Elem-Indexed-Solution,X,Y,_) :-
 	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalX #= X,
 	Y #> CapitalY,
-	write(' ?'),
-	write(' '),
-	printColumnSeparator.
-	
 
-printElement(Elem-Indexed,X,Y,_) :-
-	member([Elem, _,CapitalX, CapitalY], Indexed),
-	CapitalY #= Y,
-	X  #< CapitalX,
-	Xnow is X - 1,
-	member([Elem, _,Xnow, CapitalY], Indexed),
-	write('--'),
+	\+ isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1),
+
+	write(' |'),
 	write(' '),
 	printColumnSeparator.
 	
-printElement(Elem-Indexed,X,Y,_) :-
-	member([Elem, _,CapitalX, CapitalY], Indexed),
-	CapitalY #= Y,
-	X  #> CapitalX,
-	Xnow is X + 1,
-	member([Elem, _,Xnow, CapitalY], Indexed),
-	write('--'),
-	write(' '),
-	printColumnSeparator.
-	
-printElement(Elem-Indexed,X,Y,_) :-
+% <
+printElement(Elem-Indexed-Solution,X,Y,_) :-
 	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalY #= Y,
 	X  #< CapitalX,
+
+	isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0),
+
+	write(' '),
 	write('<-'),
-	write(' '),
+	printColumnSeparator.
+	
+printElement(Elem-Indexed-Solution,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalY #= Y,
+	X  #< CapitalX,
+
+	\+ isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0),
+
+	write('---'),
 	printColumnSeparator.
 
-
-printElement(Elem-Indexed,X,Y,_) :-
+% >
+printElement(Elem-Indexed-Solution,X,Y,_) :-
 	member([Elem, _,CapitalX, CapitalY], Indexed),
 	CapitalY #= Y,
 	X  #> CapitalX,
+
+	isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0),
+
 	write('->'),
 	write(' '),
 	printColumnSeparator.
 
+printElement(Elem-Indexed-Solution,X,Y,_) :-
+	member([Elem, _,CapitalX, CapitalY], Indexed),
+	CapitalY #= Y,
+	X  #> CapitalX,
 
+	\+ isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0),
+
+	write('---'),
+	printColumnSeparator.
+
+% The predicate to print the solution itself
 
 printSolution(Solution-Indexed) :-
 	length(Solution, N),
@@ -114,17 +124,17 @@ printSolutionAux(_-_, N, N).
 printSolutionAux(Solution-Indexed, I, N) :-
 	nth0(I, Solution, Row),
 	printColumnSeparator,
-	printRow(Row-Indexed, 0, I, N), nl,
+	printRow(Row-Indexed-Solution, 0, I, N), nl,
 	printColumnSeparator, printRowAppearance(Row), nl,
 	NewI #= I + 1,
 	printSolutionAux(Solution-Indexed, NewI, N).
 
 printRow(_, N, _, N).
-printRow(Row-Indexed, X, Y, N):-
+printRow(Row-Indexed-Solution, X, Y, N):-
 	nth0(X, Row, Elem),
-	printElement(Elem-Indexed, X, Y, N),
+	printElement(Elem-Indexed-Solution, X, Y, N),
 	NewX #= X + 1,
-	printRow(Row-Indexed, NewX, Y, N).
+	printRow(Row-Indexed-Solution, NewX, Y, N).
 
 printColumnSeparator :- write('|').
 
@@ -140,6 +150,9 @@ printRowAppearance([_ | Tail]) :-
 	printColumnSeparator,
 	printRowAppearance(Tail).
 printRowUnderline :- write('___').
+
+
+% A predicate to print the unsolved puzzle.
 
 printUnsolvedPuzzle(Puzzle):-
 	length(Puzzle, N),
@@ -190,3 +203,46 @@ list_to_matrix_row(Tail, 0, [], Tail).
 list_to_matrix_row([Item|List], Size, [Item|Row], Tail):-
   NSize is Size-1,
   list_to_matrix_row(List, NSize, Row, Tail).
+
+
+% A predicate used to determine whether this cell is the last on this region's branch. Used to check if it should be a dash or an arrow.
+
+% ^
+isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1) :-
+	Y #= 0.
+isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1) :-
+	Y #\= 0,
+	Above #= Y - 1,
+	nth0(Above, Solution, Row), nth0(X, Row, Neighboor),
+	Neighboor #\= Elem.
+
+% v
+isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1) :-
+	length(Solution, N),
+	Y #= N - 1.
+isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1) :-
+	length(Solution, N),
+	Y #\= N - 1,
+	Below #= Y + 1,
+	nth0(Below, Solution, Row), nth0(X, Row, Neighboor),
+	Neighboor #\= Elem.
+
+% <
+isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
+	X #= 0.
+isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
+	X #\= 0,
+	Left #= X - 1,
+	nth0(Y, Solution, Row), nth0(Left, Row, Neighboor),
+	Neighboor #\= Elem.
+
+%>
+isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0) :-
+	length(Solution, N),
+	X #= N - 1.
+isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0) :-
+	length(Solution,N),
+	X #\= N - 1,
+	Right #= X + 1,
+	nth0(Y, Solution, Row), nth0(Right, Row, Neighboor),
+	Neighboor #\= Elem.
