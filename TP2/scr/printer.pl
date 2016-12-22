@@ -230,7 +230,7 @@ isLastOnBranch(Elem-_-Solution,X,Y,0,1) :-
 % <
 isLastOnBranch(_-_-_,X,_,-1,0) :-
 	X #= 0.
-isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
+isLastOnBranch(Elem-_-Solution,X,Y,-1,0) :-
 	X #\= 0,
 	Left #= X - 1,
 	nth0(Y, Solution, Row), nth0(Left, Row, Neighboor),
