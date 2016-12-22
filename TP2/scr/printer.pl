@@ -4,7 +4,7 @@
 
 
 % A predicate to print the element, whether it is a capital, a dash or an arrow.
-printElement(Elem-Indexed-Solution, X, Y,_) :-
+printElement(Elem-Indexed-_, X, Y,_) :-
 	member([Elem, Area, CapitalX, CapitalY], Indexed),
 	CapitalX #= X, CapitalY #= Y,
 	Area #>= 10,
@@ -12,7 +12,7 @@ printElement(Elem-Indexed-Solution, X, Y,_) :-
 	write(Area),
 	printColumnSeparator.
 
-printElement(Elem-Indexed-Solution, X, Y,_) :-
+printElement(Elem-Indexed-_, X, Y,_) :-
 	member([Elem, Area, CapitalX, CapitalY], Indexed),
 	CapitalX #= X, CapitalY #= Y,
 	Area #< 10,
@@ -208,19 +208,19 @@ list_to_matrix_row([Item|List], Size, [Item|Row], Tail):-
 % A predicate used to determine whether this cell is the last on this region's branch. Used to check if it should be a dash or an arrow.
 
 % ^
-isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1) :-
+isLastOnBranch(_-_-_,_,Y,0,-1) :-
 	Y #= 0.
-isLastOnBranch(Elem-Indexed-Solution,X,Y,0,-1) :-
+isLastOnBranch(Elem-_-Solution,X,Y,0,-1) :-
 	Y #\= 0,
 	Above #= Y - 1,
 	nth0(Above, Solution, Row), nth0(X, Row, Neighboor),
 	Neighboor #\= Elem.
 
 % v
-isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1) :-
+isLastOnBranch(_-_-Solution,_,Y,0,1) :-
 	length(Solution, N),
 	Y #= N - 1.
-isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1) :-
+isLastOnBranch(Elem-_-Solution,X,Y,0,1) :-
 	length(Solution, N),
 	Y #\= N - 1,
 	Below #= Y + 1,
@@ -228,7 +228,7 @@ isLastOnBranch(Elem-Indexed-Solution,X,Y,0,1) :-
 	Neighboor #\= Elem.
 
 % <
-isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
+isLastOnBranch(_-_-_,X,_,-1,0) :-
 	X #= 0.
 isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
 	X #\= 0,
@@ -237,10 +237,10 @@ isLastOnBranch(Elem-Indexed-Solution,X,Y,-1,0) :-
 	Neighboor #\= Elem.
 
 %>
-isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0) :-
+isLastOnBranch(_-_-Solution,X,_,1,0) :-
 	length(Solution, N),
 	X #= N - 1.
-isLastOnBranch(Elem-Indexed-Solution,X,Y,1,0) :-
+isLastOnBranch(Elem-_-Solution,X,Y,1,0) :-
 	length(Solution,N),
 	X #\= N - 1,
 	Right #= X + 1,
