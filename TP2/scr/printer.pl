@@ -4,7 +4,13 @@
 
 
 % A predicate to print the element, whether it is a capital, a dash or an arrow.
-
+printElement(Elem-Indexed-_, X, Y,_) :-
+	member([Elem, Area, CapitalX, CapitalY], Indexed),
+	CapitalX #= X, CapitalY #= Y,
+	Area #>= 10,
+	write(' '),
+	write(Area),
+	printColumnSeparator.
 
 printElement(Elem-Indexed-_, X, Y,_) :-
 	member([Elem, Area, CapitalX, CapitalY], Indexed),

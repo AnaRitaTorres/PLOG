@@ -51,7 +51,7 @@ solver(Board, Solution) :-
 	constrainCohesions(Indexed, Result, 0, MaxRegions1),
 
 	% We were opperating on a matrix because it was a lot easier to visualize and manipulate. To generate the solution, we need to flatten out the matrix on a single list.
-	flatten_list(Result, Flat_Solution),
+	append(Result, Flat_Solution),
 
 	% Generate solution
 	labeling([bisect], Flat_Solution),
@@ -99,7 +99,7 @@ setColAux(Xnow, X, Number, [Element | Tail], [Head | Tail2]) :-  Xnow \= X,
 getNumbers(Board, Numbers) :-
 	length(Board, N),
 	getNumbersInRows(Board, 0, N, List),
-	flatten_list(List, Numbers).
+	append(List, Numbers).
 
 getNumbersInRows(_, N, N, []).
 getNumbersInRows(Board, Y, N, [Head | Tail]) :-
@@ -120,16 +120,6 @@ getNumbersInRow(Row, X, Y, N, Tail) :-
 	Number == -1,
 	X1 is X + 1,
 	getNumbersInRow(Row, X1, Y, N, Tail).
-
-% Auxiliary Predicate to flatten the list
-
-flatten_list([], []).
-flatten_list( [HeadList| TailList], Result) :- 
-	flatten_list( TailList, NewTailList), 
-	!, 
-	append(HeadList, NewTailList, Result).
-flatten_list( [ HeadList | Tail ], [ HeadList | OtherTail ]) :- 
-	flatten_list( Tail, OtherTail).
 
 % A predicate to add an index to each member of the squares list
 % Ie, this gets all the information we need about each capital: [Region_Index, Region_TotalArea, Region_CapitalX, Region_CapitalY].
